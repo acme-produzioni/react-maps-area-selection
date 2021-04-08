@@ -1,8 +1,10 @@
-import * as React from 'react'
+import * as React from 'react';
+import ReactDOM from 'react-dom';
 import SearchCity from './components/SearchCity';
 import GoogleMapReact from 'google-map-react';
 import styles from './styles.module.css';
 import PropTypes from 'prop-types';
+import resetButton from './gmapsUI/reset';
 
 type GMapsAPI = {
   map: google.maps.Map, 
@@ -23,6 +25,7 @@ interface Props {
 }
 
 let polygon : google.maps.Polygon;
+let GMapsAPI : GMapsAPI;
 
 const DEFAULT_OPTIONS = {
   width: '100%',
@@ -32,17 +35,36 @@ const DEFAULT_OPTIONS = {
 
 const ReactMapsAreaSelection = ({ apiKey, options, center = CENTER_FOLIGNO, onChange }: Props) => {
 
-  const [GMapsAPI, setGMapsAPI] = React.useState<GMapsAPI>();
+ // const [GMapsAPI, setGMapsAPI] = React.useState<GMapsAPI>();
 
   const handleApiLoaded = (mapObj: GMapsAPI ) : void => 
   {
-    setGMapsAPI(mapObj)
-    setPolygon(mapObj);    
+    GMapsAPI = mapObj;
+
+    setPolygon() 
+    setCustomUI()
+  }
+
+  function setCustomUI()
+  {
+    const cityInput = document.createElement('div');
+    ReactDOM.render(<SearchCity 
+                      maps={GMapsAPI?.maps} 
+                      onPlaceChanged={onPlaceChanged} />, cityInput);
+    GMapsAPI.map.controls[google.maps.ControlPosition.TOP_LEFT].push(cityInput);
+
+    const resetDiv = document.createElement("div");
+    resetButton(resetDiv); 
+    GMapsAPI.map.controls[google.maps.ControlPosition.LEFT_TOP].push(resetDiv);
+  
+
+    google.maps.event.addDomListener(resetDiv, 'click', resetPolygon);
   }
 
 
-  async function setPolygon({map, maps} : GMapsAPI) : Promise<any>
+  async function setPolygon() : Promise<any>
   {
+    const {map, maps} = GMapsAPI;
     const {lat, lng} = map.getCenter()?.toJSON() as google.maps.LatLngLiteral;
 
     const path = [
@@ -63,7 +85,6 @@ const ReactMapsAreaSelection = ({ apiKey, options, center = CENTER_FOLIGNO, onCh
       strokeWeight: 2,
       map: map
     });
-
 
     class DeleteMenu extends google.maps.OverlayView {
 
@@ -161,8 +182,7 @@ const ReactMapsAreaSelection = ({ apiKey, options, center = CENTER_FOLIGNO, onCh
         path.removeAt(vertex);
         this.close();
       }
-    }
-    
+    }    
 
     const deleteMenu = new DeleteMenu();
 
@@ -175,7 +195,6 @@ const ReactMapsAreaSelection = ({ apiKey, options, center = CENTER_FOLIGNO, onCh
 
     maps.event.addListener(polygon, 'click', polygonChanged)
     maps.event.addListener(polygon, 'mouseup', polygonChanged)
-
   }
 
   function onPlaceChanged(newCenter : google.maps.LatLngLiteral)
@@ -183,13 +202,14 @@ const ReactMapsAreaSelection = ({ apiKey, options, center = CENTER_FOLIGNO, onCh
     if(!GMapsAPI) return 
 
     GMapsAPI.map.setCenter(newCenter);
-    setPolygon(GMapsAPI)
+    setPolygon()
   }
 
-  function resetPolygon()
+  const resetPolygon = () => 
   {
-    if(!GMapsAPI) return 
-    setPolygon(GMapsAPI)
+    if(!GMapsAPI) return;
+
+    setPolygon()
     polygonChanged();
   }
 
@@ -221,11 +241,6 @@ const ReactMapsAreaSelection = ({ apiKey, options, center = CENTER_FOLIGNO, onCh
         height: options?.height||DEFAULT_OPTIONS.height
       }}
     >
-      <div className={styles.panelTool}>
-        <SearchCity maps={GMapsAPI?.maps} onPlaceChanged={onPlaceChanged} />
-        <button onClick={resetPolygon}>Reset</button>
-      </div>
-
       <GoogleMapReact
         bootstrapURLKeys={{ 
           key: apiKey,
@@ -236,10 +251,14 @@ const ReactMapsAreaSelection = ({ apiKey, options, center = CENTER_FOLIGNO, onCh
         yesIWantToUseGoogleMapApiInternals
         onGoogleApiLoaded={handleApiLoaded}
       >
+
       </GoogleMapReact>
     </div>
   )
 }
+
+
+
 const CENTER_FOLIGNO = {lat: 42.958433, lng: 12.709864}
 
 ReactMapsAreaSelection.propTypes = {

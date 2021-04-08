@@ -1,6 +1,7 @@
 import * as React from 'react'
 import styles from './styles.css'
 
+
 interface Props {
    onPlaceChanged: (newCenter : google.maps.LatLngLiteral) => void
    maps : any
@@ -13,9 +14,7 @@ const SearchCity = ({ maps, onPlaceChanged }: Props) => {
     const [googleMaps, setGoogleMaps] = React.useState();
     const autocompleteInput = React.useRef(null);
 
-    React.useEffect(() => {
-        console.log('sc', maps);
-        
+    React.useEffect(() => {             
         if(!maps || googleMaps !== undefined || autocompleteInput.current === null) return;
 
         setGoogleMaps(maps);
@@ -35,7 +34,8 @@ const SearchCity = ({ maps, onPlaceChanged }: Props) => {
 
     function placeChanged()
     {
-        const place = googleAutocomplete.getPlace().geometry?.location;
+      
+      const place = googleAutocomplete.getPlace().geometry?.location;
 
         if(place === undefined) return;
 
