@@ -15,7 +15,8 @@
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "types": ["google.maps"]
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist", "example"]

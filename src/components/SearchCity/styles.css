@@ -1,0 +1,10 @@
+.searchCityWrapper{
+    max-width: 400px;
+    width: 100%;
+}
+.gmapsAutocomplete{
+    padding: 0.3rem;
+    border: 0;
+    border-bottom: 1px solid black;
+    width: 100%;
+}

@@ -21,7 +21,8 @@
     "react-dom": "link:../node_modules/react-dom",
     "react-scripts": "link:../node_modules/react-scripts",
     "typescript": "link:../node_modules/typescript",
-    "react-maps-area-selection": "link:.."
+    "react-maps-area-selection": "link:..",
+    "@types/google.maps": "link:../node_modules/@types/google.maps"
   },
   "devDependencies": {
     "@babel/plugin-syntax-object-rest-spread": "^7.8.3"
