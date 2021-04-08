@@ -9,18 +9,21 @@
 ```bash
 npm install --save react-maps-area-selection
 ```
+```bash
+yarn add --save react-maps-area-selection
+```
 
 ## Usage
 
 ```tsx
 import React, { Component } from 'react'
 
-import MyComponent from 'react-maps-area-selection'
+import ReactMapAreaSelection from 'react-maps-area-selection'
 import 'react-maps-area-selection/dist/index.css'
 
 class Example extends Component {
   render() {
-    return <MyComponent />
+    return <ReactMapAreaSelection />
   }
 }
 ```
