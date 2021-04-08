@@ -21,7 +21,8 @@ interface Props {
   apiKey: string,
   options?: AreaSelectionOptions,  
   center?: google.maps.LatLngLiteral
-  onChange: (vertex : number[]) => any
+  onChange: (vertex : number[]) => any,
+  initialPolygon?: google.maps.LatLngLiteral[]
 }
 
 let polygon : google.maps.Polygon;
@@ -33,7 +34,7 @@ const DEFAULT_OPTIONS = {
   strokeColor: '#7f101d'
 }
 
-const ReactMapsAreaSelection = ({ apiKey, options, center = CENTER_FOLIGNO, onChange }: Props) => {
+const ReactMapsAreaSelection = ({ apiKey, options, initialPolygon, center = CENTER_FOLIGNO, onChange }: Props) => {
 
  // const [GMapsAPI, setGMapsAPI] = React.useState<GMapsAPI>();
 
@@ -41,7 +42,7 @@ const ReactMapsAreaSelection = ({ apiKey, options, center = CENTER_FOLIGNO, onCh
   {
     GMapsAPI = mapObj;
 
-    setPolygon() 
+    setPolygon(initialPolygon) 
     setCustomUI()
   }
 
@@ -62,12 +63,13 @@ const ReactMapsAreaSelection = ({ apiKey, options, center = CENTER_FOLIGNO, onCh
   }
 
 
-  async function setPolygon() : Promise<any>
+  async function setPolygon(initialPolygon: google.maps.LatLngLiteral[]|null = null) : Promise<any>
   {
     const {map, maps} = GMapsAPI;
     const {lat, lng} = map.getCenter()?.toJSON() as google.maps.LatLngLiteral;
 
-    const path = [
+ 
+    const path = initialPolygon ? initialPolygon : [
       new maps.LatLng(lat+0.01, lng+0.01),
       new maps.LatLng(lat+0.01, lng-0.01),
       new maps.LatLng(lat-0.01, lng-0.01),

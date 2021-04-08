@@ -1,3 +1,5 @@
+# NOT YET PUBLISHED!
+
 # react-maps-area-selection
 
 > Define an area on a map using a polygon
