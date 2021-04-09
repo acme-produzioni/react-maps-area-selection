@@ -19,13 +19,14 @@ interface AreaSelectionOptions {
 
 interface Props {
   apiKey: string,
+  onChange: (vertex : google.maps.LatLngLiteral[]) => any,
   options?: AreaSelectionOptions,  
   center?: google.maps.LatLngLiteral
-  onChange: (vertex : number[]) => any,
-  initialPolygon?: google.maps.LatLngLiteral[]
+  onPlaceChanged?: (place: any, city: string|undefined) => any,
+  polygon?: google.maps.LatLngLiteral[]
 }
 
-let polygon : google.maps.Polygon;
+let GMapsPolygon : google.maps.Polygon;
 let GMapsAPI : GMapsAPI;
 
 const DEFAULT_OPTIONS = {
@@ -34,15 +35,19 @@ const DEFAULT_OPTIONS = {
   strokeColor: '#7f101d'
 }
 
-const ReactMapsAreaSelection = ({ apiKey, options, initialPolygon, center = CENTER_FOLIGNO, onChange }: Props) => {
+const ReactMapsAreaSelection = ({ apiKey, options, polygon, center = CENTER_FOLIGNO, onChange, onPlaceChanged }: Props) => {
 
- // const [GMapsAPI, setGMapsAPI] = React.useState<GMapsAPI>();
+  React.useMemo( () => {
+    if(!GMapsAPI) return;
+
+    setPolygon(polygon)
+  }, [polygon])
 
   const handleApiLoaded = (mapObj: GMapsAPI ) : void => 
   {
     GMapsAPI = mapObj;
 
-    setPolygon(initialPolygon) 
+    setPolygon(polygon) 
     setCustomUI()
   }
 
@@ -51,7 +56,7 @@ const ReactMapsAreaSelection = ({ apiKey, options, initialPolygon, center = CENT
     const cityInput = document.createElement('div');
     ReactDOM.render(<SearchCity 
                       maps={GMapsAPI?.maps} 
-                      onPlaceChanged={onPlaceChanged} />, cityInput);
+                      onPlaceChanged={placeChanged} />, cityInput);
     GMapsAPI.map.controls[google.maps.ControlPosition.TOP_LEFT].push(cityInput);
 
     const resetDiv = document.createElement("div");
@@ -63,22 +68,21 @@ const ReactMapsAreaSelection = ({ apiKey, options, initialPolygon, center = CENT
   }
 
 
-  async function setPolygon(initialPolygon: google.maps.LatLngLiteral[]|null = null) : Promise<any>
+  async function setPolygon(customPolygon: google.maps.LatLngLiteral[]|null = null) : Promise<any>
   {
     const {map, maps} = GMapsAPI;
     const {lat, lng} = map.getCenter()?.toJSON() as google.maps.LatLngLiteral;
-
  
-    const path = initialPolygon ? initialPolygon : [
+    const path = customPolygon ? customPolygon : [
       new maps.LatLng(lat+0.01, lng+0.01),
       new maps.LatLng(lat+0.01, lng-0.01),
       new maps.LatLng(lat-0.01, lng-0.01),
       new maps.LatLng(lat-0.01, lng+0.01)
-    ]
+    ] 
 
-    if(polygon) polygon.setMap(null)
+    if(GMapsPolygon) GMapsPolygon.setMap(null)
 
-    polygon = new maps.Polygon({
+    GMapsPolygon = new maps.Polygon({
       path: path,
       editable: true,
       draggable: false,
@@ -188,22 +192,25 @@ const ReactMapsAreaSelection = ({ apiKey, options, initialPolygon, center = CENT
 
     const deleteMenu = new DeleteMenu();
 
-    maps.event.addListener(polygon, "click", (e:any) => {
-      if (e.vertex == undefined || polygon.getPath().getLength() < 4) {
+    maps.event.addListener(GMapsPolygon, "click", (e:any) => {
+      if (e.vertex == undefined || GMapsPolygon.getPath().getLength() < 4) {
         return;
       }
-      deleteMenu.open(map, polygon.getPath(), e.vertex);
+      deleteMenu.open(map, GMapsPolygon.getPath(), e.vertex);
     });
 
-    maps.event.addListener(polygon, 'click', polygonChanged)
-    maps.event.addListener(polygon, 'mouseup', polygonChanged)
+    maps.event.addListener(GMapsPolygon, 'click', polygonChanged)
+    maps.event.addListener(GMapsPolygon, 'mouseup', polygonChanged)
   }
 
-  function onPlaceChanged(newCenter : google.maps.LatLngLiteral)
+  function placeChanged(newCenter : google.maps.LatLngLiteral, city: string|undefined)
   {
     if(!GMapsAPI) return 
 
     GMapsAPI.map.setCenter(newCenter);
+
+    if(onPlaceChanged) onPlaceChanged(newCenter, city);
+
     setPolygon()
   }
 
@@ -221,16 +228,19 @@ const ReactMapsAreaSelection = ({ apiKey, options, initialPolygon, center = CENT
   }
 
   
-  function getVertexPoints() : number[] {
+  function getVertexPoints() : google.maps.LatLngLiteral[] {
     // Since this polygon has only one path, we can call getPath() to return the
     // MVCArray of LatLngs.
-    const vertices = polygon.getPath();
-    const verticiesObj : number[] = [];
+    const vertices = GMapsPolygon.getPath();
+    const verticiesObj : google.maps.LatLngLiteral[] = [];
   
     // Iterate over the vertices.
-    for (let i = 0; i < vertices.getLength(); i++) {
-      verticiesObj.push(vertices.getAt(i));  
-    }
+    for (let i = 0; i < vertices.getLength(); i++)
+      verticiesObj.push({
+        lat: vertices.getAt(i).lat(), 
+        lng:  vertices.getAt(i).lng()
+      });  
+    
    
     return verticiesObj;
   } 

@@ -3,7 +3,7 @@ import styles from './styles.css'
 
 
 interface Props {
-   onPlaceChanged: (newCenter : google.maps.LatLngLiteral) => void
+   onPlaceChanged: (newCenter : google.maps.LatLngLiteral, city: string|undefined) => void
    maps : any
   }
 
@@ -42,7 +42,7 @@ const SearchCity = ({ maps, onPlaceChanged }: Props) => {
         onPlaceChanged({
             lat: place.lat(),
             lng: place.lng()
-        })
+        }, googleAutocomplete.getPlace().name)
     }    
 
 
