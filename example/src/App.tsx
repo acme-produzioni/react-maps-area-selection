@@ -3,7 +3,6 @@ import React from 'react'
 import ReactMapsAreaSelection from 'react-maps-area-selection'
 import 'react-maps-area-selection/dist/index.css'
 
-
 const POLYGON_TEST = [
   { lng: 12.6115981, lat: 42.9642201 },
   { lng: 12.6491471, lat: 42.9212276 },
@@ -23,6 +22,7 @@ const POLYGON_TEST = [
   { lng: 12.6891963, lat: 42.9763281 },
   { lng: 12.611598, lat: 42.96422 }
 ]
+
 
 const convertArrayToLatLngLiteral = (coordsArray: Array<any>) => {
 
@@ -61,7 +61,7 @@ const App = () => {
 
       <textarea 
         readOnly
-        value={vertex.toString()} 
+        value={vertex.map(i => `(${i.lat},${i.lng})`)} 
         style={{width:'100%', height:'200px'}}>
       </textarea>
     </div>
