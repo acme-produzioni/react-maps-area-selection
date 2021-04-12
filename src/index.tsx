@@ -47,6 +47,14 @@ const ReactMapsAreaSelection = ({ apiKey, options, polygon, center = CENTER_FOLI
   {
     GMapsAPI = mapObj;
 
+    if(polygon){
+      const bounds = new google.maps.LatLngBounds();
+
+      polygon.map(i => bounds.extend(i))
+
+      mapObj.map.setCenter(bounds.getCenter());
+    }
+
     setPolygon(polygon) 
     setCustomUI()
   }
