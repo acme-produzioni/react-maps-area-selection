@@ -33,3 +33,7 @@ class Example extends Component {
 ## License
 
 MIT © [acme-produzioni](https://github.com/acme-produzioni)
+
+## TO-DO
+- [Restricted Map Bounds](https://developers.google.com/maps/documentation/javascript/examples/control-bounds-restriction)
+- [Get city boundries from Open StreetMap API](https://nominatim.org/release-docs/develop/api/Lookup/#polygon-output)

@@ -51,7 +51,8 @@ const ReactMapsAreaSelection = ({ apiKey, options, polygon, center = CENTER_FOLI
       const bounds = new google.maps.LatLngBounds();
 
       polygon.map(i => bounds.extend(i))
-
+      
+      mapObj.map.fitBounds(bounds, 0); 
       mapObj.map.setCenter(bounds.getCenter());
     }
 
@@ -100,7 +101,9 @@ const ReactMapsAreaSelection = ({ apiKey, options, polygon, center = CENTER_FOLI
       map: map
     });
 
-    class DeleteMenu extends google.maps.OverlayView {
+
+
+    class DeleteMenu extends google.maps.OverlayView { 
 
       private div_: HTMLDivElement;
       private divListener_?: google.maps.MapsEventListener;
@@ -200,15 +203,17 @@ const ReactMapsAreaSelection = ({ apiKey, options, polygon, center = CENTER_FOLI
 
     const deleteMenu = new DeleteMenu();
 
-    maps.event.addListener(GMapsPolygon, "click", (e:any) => {
+
+    maps.event.addListener(GMapsPolygon, "mouseup", (e:any) : boolean => {
+      polygonChanged()
+     
       if (e.vertex == undefined || GMapsPolygon.getPath().getLength() < 4) {
-        return;
+        return true;
       }
       deleteMenu.open(map, GMapsPolygon.getPath(), e.vertex);
+      return true;
     });
 
-    maps.event.addListener(GMapsPolygon, 'click', polygonChanged)
-    maps.event.addListener(GMapsPolygon, 'mouseup', polygonChanged)
   }
 
   function placeChanged(newCenter : google.maps.LatLngLiteral, city: string|undefined)
