@@ -28,7 +28,8 @@
     "@types/google.maps": "*",
     "google-map-react": "*",
     "prop-types": "*",
-    "react": "*"
+    "react": "*",
+    "react-dom": "*"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^4.2.4",
