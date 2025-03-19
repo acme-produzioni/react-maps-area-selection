@@ -1,0 +1,47 @@
+._2doUD{
+    max-width: 400px;
+    width: 100%;
+}
+._3SaM9{
+    border: 0;
+    border-radius: 3px;
+    padding: 5px;
+    width: 100%;
+    box-shadow: 0 2px 6px rgba(0,0,0,.3);
+    margin-left: 8px;
+    margin-top: 8px; 
+}
+/* add css module styles here (optional) */
+
+._2Ta6d {
+  display: flex;
+  flex-direction: column;
+}
+
+._3JwS5{
+  display: flex;
+  flex-direction: row;
+  padding: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+._sfPTo {
+  position: absolute;
+  background: white;
+  padding: 3px;
+  color: #666;
+  font-weight: bold;
+  border: 1px solid #999;
+  font-family: sans-serif;
+  font-size: 12px;
+  box-shadow: 1px 3px 3px rgba(0, 0, 0, 0.3);
+  margin-top: -10px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+._sfPTo:hover {
+  background: #eee;
+}
+
